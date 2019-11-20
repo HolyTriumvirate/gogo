@@ -46,6 +46,12 @@ var nums = [][]byte {
 	0,1,1,
 	0,0,1,
 	1,1,1,
+	},{
+	1,0,1,
+	1,0,1,
+	1,1,1,
+	0,0,1,
+	0,0,1,
 	}}
 
 type color struct {
@@ -198,7 +204,6 @@ func setPixel(x,y int, c color, pixels []byte){
 }
 
 func main() {
-	//added for mac
 	err := sdl.Init(sdl.INIT_EVERYTHING)
 	if err != nil {
 		fmt.Println(err)
@@ -229,12 +234,6 @@ func main() {
 	}
 	defer tex.Destroy()
 
-	var controllerHandlers []*sdl.GameController
-	for i := 0; i < sdl.NumJoysticks();i++ {
-		controllerHandlers = append(controllerHandlers, sdl.GameControllerOpen(i))
-		defer controllerHandlers[i].Close()
-	}
-
 	pixels := make([]byte, winWidth*winHeight*4)
 	
 	player1 := paddle{pos{20,100},20,100,300,0,color{255,255,255}}
@@ -257,19 +256,13 @@ func main() {
 			}
 		}
 
-		for _,controller := range controllerHandlers {
-			if controller != nil {
-				controllerAxis = controller.Axis(sdl.CONTROLLER_AXIS_LEFTY)
-			}
-		}
-
 		if state == play {
 			player1.update(keyState, controllerAxis, elapsedTime)
 			player2.aiUpdate(&ball, elapsedTime)
 			ball.update(&player1, &player2, elapsedTime)
 		} else if state == start {
 			if keyState[sdl.SCANCODE_SPACE] != 0 {
-				if player1.score == 3 || player2.score == 3 {
+				if player1.score == 4 || player2.score == 4 {
 					player1.score = 0
 					player2.score = 0
 				}
